@@ -2,8 +2,19 @@ nginx:
     build: ./nginx
     ports:
       - "80:80"
+    links:
+      - "php"
     volumes:
       - '/Users/zhongjunbin/Document/Kitematic/nginx:/opt'
+php:
+    build: ./php
+    ports:
+      - "9000:9000"
+    links:
+      - "mysql"
+      - "memcache"
+    volumes:
+      - '/Users/zhongjunbin/Document/Kitematic/nginx/htdocs:/opt/htdocs'
 mysql:
     build: ./mysql
     ports:
@@ -12,3 +23,7 @@ mysql:
       - '/Users/zhongjunbin/Document/Kitematic/mysql:/var/lib/mysql'
     environment:
       MYSQL_ROOT_PASSWORD: 123456
+memcache:
+    build: ./memcache
+    ports:
+      - "11211:11211"
