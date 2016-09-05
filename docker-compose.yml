@@ -27,3 +27,10 @@ memcache:
     build: ./memcache
     ports:
       - "11211:11211"
+elasticsearch:
+    build: ./elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - '/Users/zhongjunbin/Document/Kitematic/elasticsearch/data:/usr/share/elasticsearch/data'
