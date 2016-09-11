@@ -5,7 +5,7 @@ nginx:
     links:
       - "php"
     volumes:
-      - '/Users/zhongjunbin/Document/Kitematic/nginx:/opt'
+      - '$HOME/Document/Kitematic/nginx:/opt'
 php:
     build: ./php
     ports:
@@ -14,13 +14,13 @@ php:
       - "mysql"
       - "memcache"
     volumes:
-      - '/Users/zhongjunbin/Document/Kitematic/nginx/htdocs:/opt/htdocs'
+      - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
 mysql:
     build: ./mysql
     ports:
       - "3306:3306"
     volumes:
-      - '/Users/zhongjunbin/Document/Kitematic/mysql:/var/lib/mysql'
+      - '$HOME/Document/Kitematic/mysql:/var/lib/mysql'
     environment:
       MYSQL_ROOT_PASSWORD: 123456
 memcache:
@@ -33,4 +33,13 @@ elasticsearch:
       - "9200:9200"
       - "9300:9300"
     volumes:
-      - '/Users/zhongjunbin/Document/Kitematic/elasticsearch/data:/usr/share/elasticsearch/data'
+      - '$HOME/Document/Kitematic/elasticsearch/data:/usr/share/elasticsearch/data'
+postgres:
+    build: ./postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - '$HOME/Document/Kitematic/postgres:/var/lib/postgresql'
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123456
