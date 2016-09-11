@@ -43,3 +43,15 @@ postgres:
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: 123456
+mongodb:
+    build: ./mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - '$HOME/Document/Kitematic/mongodb:/data'
+redis:
+    build: ./redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - '$HOME/Document/Kitematic/redis:/data'
