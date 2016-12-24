@@ -4,9 +4,26 @@ RUN apt-get install -y libfreetype6-dev
 RUN apt-get install -y libjpeg62-turbo-dev
 RUN apt-get install -y libmcrypt-dev
 RUN apt-get install -y libpng12-dev
-RUN apt-get install -y libmcrypt-dev
+RUN apt-get install -y librabbitmq-dev
 RUN docker-php-ext-install -j$(nproc) iconv mcrypt
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
 RUN docker-php-ext-install -j$(nproc) gd
 RUN docker-php-ext-install pdo_mysql
+
+RUN curl -L -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/2.2.7.tar.gz \
+    && tar xfz /tmp/redis.tar.gz \
+    && rm -r /tmp/redis.tar.gz \
+    && mv phpredis-2.2.7 /usr/src/php/ext/redis \
+    && docker-php-ext-install redis
+
+RUN curl -sS https://pecl.php.net/get/amqp-1.6.0beta3.tgz -o amqp-1.6.0beta3.tgz \
+    && mkdir -p /usr/src/php/amqp \
+    && tar -xof amqp-1.6.0beta3.tgz -C /usr/src/php/amqp --strip-components=1 \
+    && rm amqp-1.6.0beta3.tgz \
+    && cd /usr/src/php/amqp \
+    && phpize \
+    && ./configure \
+    && make \
+    && make install \
+    && echo "extension=amqp.so" > /usr/local/etc/php/conf.d/ext-amqp.ini
 
