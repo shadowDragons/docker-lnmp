@@ -3,18 +3,32 @@ nginx:
     ports:
       - "80:80"
     links:
-      - "php"
+      - "php1"
+      - "php2"
+      - "php3"
     volumes:
       - '$HOME/Document/Kitematic/nginx:/opt'
-php:
+php1:
     build: ./php
-    ports:
-      - "9000:9000"
     links:
       - "mysql"
       - "memcache"
     volumes:
       - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
+php2:
+  build: ./php
+  links:
+    - "mysql"
+    - "memcache"
+  volumes:
+    - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
+php3:
+  build: ./php
+  links:
+    - "mysql"
+    - "memcache"
+  volumes:
+    - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
 mysql:
     build: ./mysql
     ports:
@@ -49,12 +63,27 @@ mongodb:
       - "27017:27017"
     volumes:
       - '$HOME/Document/Kitematic/mongodb:/data'
-redis:
+redis-master:
     build: ./redis
     ports:
       - "6379:6379"
     volumes:
       - '$HOME/Document/Kitematic/redis:/data'
+redis-slave:
+    build: ./redis
+    volumes:
+      - '$HOME/Document/Kitematic/redis:/data'
+    command: redis-server --slaveof redis-master 6379
+    links:
+      - redis-master:redis-master
+redis-sentinel:
+  build: ./sentinel
+  environment:
+    - SENTINEL_DOWN_AFTER=5000
+    - SENTINEL_FAILOVER=5000    
+  links:
+    - redis-master:redis-master
+    - redis-slave
 rabbit1:
   build: ./rabbitMQ
   hostname: rabbit1
