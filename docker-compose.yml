@@ -73,7 +73,7 @@ redis-slave:
     build: ./redis
     volumes:
       - '$HOME/Document/Kitematic/redis:/data'
-    command: redis-server --slaveof redis-master 6379
+    command: redis-server --slaveof dockerfile_redis-master 6379
     links:
       - redis-master:redis-master
 redis-sentinel:
