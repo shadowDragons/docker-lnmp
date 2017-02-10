@@ -7,34 +7,34 @@ nginx:
       - "php2"
       - "php3"
     volumes:
-      - '$HOME/Document/Kitematic/nginx:/opt'
+      - '$HOME/Documents/Kitematic/nginx:/opt'
 php1:
     build: ./php
     links:
       - "mysql"
       - "memcache"
     volumes:
-      - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
+      - '$HOME/Documents/Kitematic/nginx/htdocs:/opt/htdocs'
 php2:
   build: ./php
   links:
     - "mysql"
     - "memcache"
   volumes:
-    - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
+    - '$HOME/Documents/Kitematic/nginx/htdocs:/opt/htdocs'
 php3:
   build: ./php
   links:
     - "mysql"
     - "memcache"
   volumes:
-    - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
+    - '$HOME/Documents/Kitematic/nginx/htdocs:/opt/htdocs'
 mysql:
     build: ./mysql
     ports:
       - "3306:3306"
     volumes:
-      - '$HOME/Document/Kitematic/mysql:/var/lib/mysql'
+      - '$HOME/Documents/Kitematic/mysql:/var/lib/mysql'
     environment:
       MYSQL_ROOT_PASSWORD: 123456
 memcache:
@@ -47,13 +47,13 @@ elasticsearch:
       - "9200:9200"
       - "9300:9300"
     volumes:
-      - '$HOME/Document/Kitematic/elasticsearch/data:/usr/share/elasticsearch/data'
+      - '$HOME/Documents/Kitematic/elasticsearch/data:/usr/share/elasticsearch/data'
 postgres:
     build: ./postgres
     ports:
       - "5432:5432"
     volumes:
-      - '$HOME/Document/Kitematic/postgres:/var/lib/postgresql'
+      - '$HOME/Documents/Kitematic/postgres:/var/lib/postgresql'
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: 123456
@@ -62,18 +62,23 @@ mongodb:
     ports:
       - "27017:27017"
     volumes:
-      - '$HOME/Document/Kitematic/mongodb:/data'
+      - '$HOME/Documents/Kitematic/mongodb:/data'
 redis-master:
     build: ./redis
     ports:
       - "6379:6379"
-    volumes:
-      - '$HOME/Document/Kitematic/redis:/data'
-redis-slave:
+redis-slave1:
     build: ./redis
-    volumes:
-      - '$HOME/Document/Kitematic/redis:/data'
-    command: redis-server --slaveof dockerfile_redis-master 6379
+    command: redis-server --slaveof redis-master 6379
+    ports:
+      - "6380:6379"
+    links:
+      - redis-master:redis-master
+redis-slave2:
+    build: ./redis
+    command: redis-server --slaveof redis-master 6379
+    ports:
+      - "6381:6379"
     links:
       - redis-master:redis-master
 redis-sentinel:
@@ -83,7 +88,7 @@ redis-sentinel:
     - SENTINEL_FAILOVER=5000    
   links:
     - redis-master:redis-master
-    - redis-slave
+    - redis-slave1
 rabbit1:
   build: ./rabbitMQ
   hostname: rabbit1
