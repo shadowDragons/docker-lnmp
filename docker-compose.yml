@@ -7,34 +7,34 @@ nginx:
       - "php2"
       - "php3"
     volumes:
-      - '$HOME/Documents/Kitematic/nginx:/opt'
+      - '$HOME/Document/Kitematic/nginx:/opt'
 php1:
     build: ./php
     links:
       - "mysql"
       - "memcache"
     volumes:
-      - '$HOME/Documents/Kitematic/nginx/htdocs:/opt/htdocs'
+      - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
 php2:
   build: ./php
   links:
     - "mysql"
     - "memcache"
   volumes:
-    - '$HOME/Documents/Kitematic/nginx/htdocs:/opt/htdocs'
+    - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
 php3:
   build: ./php
   links:
     - "mysql"
     - "memcache"
   volumes:
-    - '$HOME/Documents/Kitematic/nginx/htdocs:/opt/htdocs'
+    - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
 mysql:
     build: ./mysql
     ports:
       - "3306:3306"
     volumes:
-      - '$HOME/Documents/Kitematic/mysql:/var/lib/mysql'
+      - '$HOME/Document/Kitematic/mysql:/var/lib/mysql'
     environment:
       MYSQL_ROOT_PASSWORD: 123456
 memcache:
@@ -47,13 +47,13 @@ elasticsearch:
       - "9200:9200"
       - "9300:9300"
     volumes:
-      - '$HOME/Documents/Kitematic/elasticsearch/data:/usr/share/elasticsearch/data'
+      - '$HOME/Document/Kitematic/elasticsearch/data:/usr/share/elasticsearch/data'
 postgres:
     build: ./postgres
     ports:
       - "5432:5432"
     volumes:
-      - '$HOME/Documents/Kitematic/postgres:/var/lib/postgresql'
+      - '$HOME/Document/Kitematic/postgres:/var/lib/postgresql'
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: 123456
@@ -62,7 +62,7 @@ mongodb:
     ports:
       - "27017:27017"
     volumes:
-      - '$HOME/Documents/Kitematic/mongodb:/data'
+      - '$HOME/Document/Kitematic/mongodb:/data'
 redis-master:
     build: ./redis
     ports:
