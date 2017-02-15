@@ -41,8 +41,6 @@ mysql-master:
     build: ./mysql-cluster
     ports:
       - "3307:3306"
-    volumes:
-      - '$HOME/Document/Kitematic/mysql-cluster/master:/var/lib/mysql'
     environment:
       MYSQL_USER: admin
       MYSQL_PASS: 123456
@@ -52,8 +50,6 @@ mysql-slave:
     build: ./mysql-cluster
     ports:
       - "3308:3306"
-    volumes:
-      - '$HOME/Document/Kitematic/mysql-cluster/slave:/var/lib/mysql'
     environment:
       MYSQL_USER: admin
       MYSQL_PASS: 123456

@@ -18,7 +18,7 @@ StartMySQL ()
     TARGET_GID=$(stat -c "%g" /var/lib/mysql)
     groupmod -o -g $TARGET_GID mysql || true
     chown -R mysql:root /var/run/mysqld/
-
+    
     /usr/bin/mysqld_safe --user=mysql ${EXTRA_OPTS} > /dev/null 2>&1 &
     # Time out in 1 minute
     LOOP_LIMIT=60
