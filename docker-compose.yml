@@ -37,6 +37,7 @@ mysql:
       - '$HOME/Document/Kitematic/mysql:/var/lib/mysql'
     environment:
       MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: test
 mysql-master:
     build: ./mysql-cluster
     ports:
