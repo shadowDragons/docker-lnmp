@@ -5,4 +5,3 @@ ADD  conf.d/* /etc/nginx/conf.d/
 RUN  mkdir /opt/htdocs && mkdir /opt/log && mkdir /opt/log/nginx
 
 VOLUME ["/opt"]
-
