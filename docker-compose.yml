@@ -9,21 +9,21 @@ nginx:
     volumes:
       - '$HOME/Document/Kitematic/nginx:/opt'
 php1:
-    build: ./php
+    build: ./php7
     links:
       - "mysql"
       - "memcache"
     volumes:
       - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
 php2:
-  build: ./php
+  build: ./php7
   links:
     - "mysql"
     - "memcache"
   volumes:
     - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
 php3:
-  build: ./php
+  build: ./php7
   links:
     - "mysql"
     - "memcache"
