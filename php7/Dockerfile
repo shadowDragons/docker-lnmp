@@ -26,6 +26,7 @@ RUN echo 'http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/reposit
         php7-posix \
         php7-session \
         php7-soap \
+        php7-tokenizer \
         php7-xml \
         php7-xmlreader \
         php7-xmlwriter \

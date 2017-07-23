@@ -1,143 +1,197 @@
-nginx:
-    build: ./nginx
+version: '2'
+services:
+  nginx-master:
+      build: ./nginx-master
+      ports:
+        - "80:80"
+      links:
+        - "nginx1"
+      volumes:
+        - '$HOME/Document/Kitematic/nginx:/opt'
+      depends_on:
+        - nginx1
+        - nginx2
+  nginx1:
+      build: ./nginx1
+      ports:
+        - "8001:8001"
+      links:
+        - "php1"
+        - "php2"
+        - "php3"
+      volumes:
+        - '$HOME/Document/Kitematic/nginx:/opt'
+      depends_on:
+        - php1
+        - php2
+        - php3
+  nginx2:
+    build: ./nginx2
     ports:
-      - "80:80"
+      - "8002:8002"
     links:
       - "php1"
       - "php2"
       - "php3"
     volumes:
       - '$HOME/Document/Kitematic/nginx:/opt'
-php1:
-    build: ./php7
-    links:
-      - "mysql"
-      - "memcache"
-    volumes:
-      - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
-php2:
-  build: ./php7
-  links:
-    - "mysql"
-    - "memcache"
-  volumes:
-    - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
-php3:
-  build: ./php7
-  links:
-    - "mysql"
-    - "memcache"
-  volumes:
-    - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
-mysql:
-    build: ./mysql
-    ports:
-      - "3306:3306"
-    volumes:
-      - '$HOME/Document/Kitematic/mysql:/var/lib/mysql'
+    depends_on:
+      - php1
+      - php2
+      - php3
+  php1:
+      build: ./php7
+      links:
+        - "mysql"
+        - "memcache"
+      volumes:
+        - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
+      depends_on:
+        - mysql
+        - memcache
+  php2:
+      build: ./php7
+      links:
+        - "mysql"
+        - "memcache"
+      volumes:
+        - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
+      depends_on:
+        - mysql
+        - memcache
+  php3:
+      build: ./php7
+      links:
+        - "mysql"
+        - "memcache"
+      volumes:
+        - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
+      depends_on:
+        - mysql
+        - memcache
+  mysql:
+      build: ./mysql
+      ports:
+        - "3306:3306"
+      volumes:
+        - '$HOME/Document/Kitematic/mysql:/var/lib/mysql'
+      environment:
+        MYSQL_ROOT_PASSWORD: 123456
+        MYSQL_DATABASE: test
+        MYSQL_USER: admin
+        MYSQL_PASSWORD: 123456
+  mysql-master:
+      build: ./mysql-cluster
+      ports:
+        - "3307:3306"
+      environment:
+        MYSQL_USER: admin
+        MYSQL_PASS: 123456
+        ON_CREATE_DB: test
+        REPLICATION_MASTER: 'true'
+  mysql-slave:
+      build: ./mysql-cluster
+      ports:
+        - "3308:3306"
+      environment:
+        MYSQL_USER: admin
+        MYSQL_PASS: 123456
+        ON_CREATE_DB: test
+        REPLICATION_SLAVE: 'true'
+      links:
+        - mysql-master:mysql
+      depends_on:
+        - mysql-master
+  memcache:
+      build: ./memcache
+      ports:
+        - "11211:11211"
+  elasticsearch:
+      build: ./elasticsearch
+      ports:
+        - "9200:9200"
+        - "9300:9300"
+      volumes:
+        - '$HOME/Document/Kitematic/elasticsearch/data:/usr/share/elasticsearch/data'
+  postgres:
+      build: ./postgres
+      ports:
+        - "5432:5432"
+      volumes:
+        - '$HOME/Document/Kitematic/postgres:/var/lib/postgresql'
+      environment:
+        POSTGRES_USER: root
+        POSTGRES_PASSWORD: 123456
+  mongodb:
+      build: ./mongodb
+      ports:
+        - "27017:27017"
+      volumes:
+        - '$HOME/Document/Kitematic/mongodb:/data'
+  redis-master:
+      build: ./redis
+      ports:
+        - "6379:6379"
+  redis-slave1:
+      build: ./redis
+      command: redis-server --slaveof redis-master 6379
+      ports:
+        - "6380:6379"
+      links:
+        - redis-master:redis-master
+      depends_on:
+        - redis-master
+  redis-slave2:
+      build: ./redis
+      command: redis-server --slaveof redis-master 6379
+      ports:
+        - "6381:6379"
+      links:
+        - redis-master:redis-master
+      depends_on:
+        - redis-master
+  redis-sentinel:
+    build: ./sentinel
     environment:
-      MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: test
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: 123456
-mysql-master:
-    build: ./mysql-cluster
-    ports:
-      - "3307:3306"
-    environment:
-      MYSQL_USER: admin
-      MYSQL_PASS: 123456
-      ON_CREATE_DB: test
-      REPLICATION_MASTER: 'true'
-mysql-slave:
-    build: ./mysql-cluster
-    ports:
-      - "3308:3306"
-    environment:
-      MYSQL_USER: admin
-      MYSQL_PASS: 123456
-      ON_CREATE_DB: test
-      REPLICATION_SLAVE: 'true'
-    links:
-      - mysql-master:mysql
-memcache:
-    build: ./memcache
-    ports:
-      - "11211:11211"
-elasticsearch:
-    build: ./elasticsearch
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - '$HOME/Document/Kitematic/elasticsearch/data:/usr/share/elasticsearch/data'
-postgres:
-    build: ./postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - '$HOME/Document/Kitematic/postgres:/var/lib/postgresql'
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: 123456
-mongodb:
-    build: ./mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - '$HOME/Document/Kitematic/mongodb:/data'
-redis-master:
-    build: ./redis
-    ports:
-      - "6379:6379"
-redis-slave1:
-    build: ./redis
-    command: redis-server --slaveof redis-master 6379
-    ports:
-      - "6380:6379"
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=5000    
     links:
       - redis-master:redis-master
-redis-slave2:
-    build: ./redis
-    command: redis-server --slaveof redis-master 6379
+      - redis-slave1
+    depends_on:
+      - redis-master
+      - redis-slave1
+  rabbit1:
+    build: ./rabbitMQ
+    hostname: rabbit1
     ports:
-      - "6381:6379"
+      - "5672:5672"
+      - "15672:15672"
+  rabbit2:
+    build: ./rabbitMQ
+    hostname: rabbit2
     links:
-      - redis-master:redis-master
-redis-sentinel:
-  build: ./sentinel
-  environment:
-    - SENTINEL_DOWN_AFTER=5000
-    - SENTINEL_FAILOVER=5000    
-  links:
-    - redis-master:redis-master
-    - redis-slave1
-rabbit1:
-  build: ./rabbitMQ
-  hostname: rabbit1
-  ports:
-    - "5672:5672"
-    - "15672:15672"
-rabbit2:
-  build: ./rabbitMQ
-  hostname: rabbit2
-  links:
-    - rabbit1
-  environment:
-   - CLUSTERED=true
-   - CLUSTER_WITH=rabbit1
-   - RAM_NODE=true
-  ports:
-      - "5673:5672"
-      - "15673:15672"
-rabbit3:
-  build: ./rabbitMQ
-  hostname: rabbit3
-  links:
-    - rabbit1
-    - rabbit2
-  environment:
-   - CLUSTERED=true
-   - CLUSTER_WITH=rabbit1
-  ports:
-        - "5674:5672"
+      - rabbit1
+    environment:
+    - CLUSTERED=true
+    - CLUSTER_WITH=rabbit1
+    - RAM_NODE=true
+    ports:
+        - "5673:5672"
+        - "15673:15672"
+    depends_on:
+      - rabbit1
+  rabbit3:
+    build: ./rabbitMQ
+    hostname: rabbit3
+    links:
+      - rabbit1
+      - rabbit2
+    environment:
+    - CLUSTERED=true
+    - CLUSTER_WITH=rabbit1
+    ports:
+          - "5674:5672"
+    depends_on:
+      - rabbit1
+      - rabbit2
