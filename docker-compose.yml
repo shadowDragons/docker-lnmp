@@ -1,18 +1,19 @@
 version: '2'
 services:
-  nginx-master:
-      build: ./nginx-master
+  openresty-master:
+      build: ./openresty-master
       ports:
         - "80:80"
       links:
-        - "nginx1"
+        - "openresty1"
+        - "openresty2"
       volumes:
         - '$HOME/Document/Kitematic/nginx:/opt'
       depends_on:
-        - nginx1
-        - nginx2
-  nginx1:
-      build: ./nginx1
+        - openresty1
+        - openresty2
+  openresty1:
+      build: ./openresty1
       ports:
         - "8001:8001"
       links:
@@ -25,8 +26,8 @@ services:
         - php1
         - php2
         - php3
-  nginx2:
-    build: ./nginx2
+  openresty2:
+    build: ./openresty2
     ports:
       - "8002:8002"
     links:
