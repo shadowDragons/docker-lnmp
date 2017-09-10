@@ -1,4 +1,4 @@
-FROM hub.c.163.com/library/nginx:1.9
+FROM nginx:1.9
 
 ADD  nginx.conf /etc/nginx/nginx.conf
 ADD  conf.d/* /etc/nginx/conf.d/

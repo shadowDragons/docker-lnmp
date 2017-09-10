@@ -1,1 +1,1 @@
-FROM hub.c.163.com/library/postgres:9.6
+FROM postgres:9.6

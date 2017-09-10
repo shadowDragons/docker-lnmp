@@ -1,9 +1,9 @@
-version: '2'
+version: '3'
 services:
   openresty-master:
       build: ./openresty-master
       ports:
-        - "80:80"
+        - "81:80"
       links:
         - "openresty1"
         - "openresty2"
@@ -40,69 +40,143 @@ services:
       - php1
       - php2
       - php3
+  # consul1:
+  #   image: "progrium/consul:latest"
+  #   container_name: "consul1"
+  #   hostname: "consul1"
+  #   ports:
+  #     - "8400:8400"
+  #     - "8500:8500"
+  #     - "8600:53"
+  #   command: "-server -bootstrap-expect 3 -ui-dir /ui"
+  # consul2:
+  #   image: "progrium/consul:latest"
+  #   container_name: "consul2"
+  #   hostname: "consul2"
+  #   expose:
+  #     - "8400"
+  #     - "8500"
+  #     - "8600"
+  #   command: "-server -join consul1"
+  #   depends_on:
+  #     - consul1
+  # consul3:
+  #   image: "progrium/consul:latest"
+  #   container_name: "consul3"
+  #   hostname: "consul3"
+  #   expose:
+  #     - "8400"
+  #     - "8500"
+  #     - "8600"
+  #   command: "-server -join consul1"
+  #   depends_on:
+  #     - consul1
   php1:
       build: ./php7
       links:
-        - "mysql"
         - "memcache"
       volumes:
         - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
       depends_on:
-        - mysql
         - memcache
   php2:
       build: ./php7
       links:
-        - "mysql"
         - "memcache"
       volumes:
         - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
       depends_on:
-        - mysql
         - memcache
   php3:
       build: ./php7
       links:
-        - "mysql"
         - "memcache"
       volumes:
         - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
       depends_on:
-        - mysql
         - memcache
-  mysql:
-      build: ./mysql
-      ports:
-        - "3306:3306"
-      volumes:
-        - '$HOME/Document/Kitematic/mysql:/var/lib/mysql'
-      environment:
-        MYSQL_ROOT_PASSWORD: 123456
-        MYSQL_DATABASE: test
-        MYSQL_USER: admin
-        MYSQL_PASSWORD: 123456
   mysql-master:
-      build: ./mysql-cluster
+      build: ./mysql-replication
+      restart: unless-stopped
       ports:
-        - "3307:3306"
+          - 3306:3306
       environment:
-        MYSQL_USER: admin
-        MYSQL_PASS: 123456
-        ON_CREATE_DB: test
-        REPLICATION_MASTER: 'true'
+          - MYSQL_ROOT_PASSWORD=123456
+          - MYSQL_REPLICA_USER=replica
+          - MYSQL_REPLICA_PASS=replica_Passw0rd
+      command: ["mysqld", "--log-bin=mysql-bin", "--server-id=1"]
   mysql-slave:
-      build: ./mysql-cluster
+      build: ./mysql-replication
+      restart: unless-stopped
       ports:
-        - "3308:3306"
-      environment:
-        MYSQL_USER: admin
-        MYSQL_PASS: 123456
-        ON_CREATE_DB: test
-        REPLICATION_SLAVE: 'true'
+          - 3307:3306
       links:
-        - mysql-master:mysql
+        - mysql-master:master
+      environment:
+          - MYSQL_ROOT_PASSWORD=123456
+          - MYSQL_REPLICA_USER=replica
+          - MYSQL_REPLICA_PASS=replica_Passw0rd
+          - MYSQL_MASTER_SERVER=master
+          - MYSQL_MASTER_WAIT_TIME=10
+      command: ["mysqld", "--log-bin=mysql-bin", "--server-id=2"]
       depends_on:
-        - mysql-master
+          - mysql-master
+  # mysql:
+  #     build: ./mysql
+  #     ports:
+  #       - "3306:3306"
+  #     volumes:
+  #       - '$HOME/Document/Kitematic/mysql/mysql:/var/lib/mysql'
+  #     environment:
+  #       MYSQL_ROOT_PASSWORD: 123456
+  #       MYSQL_DATABASE: test
+  #       MYSQL_USER: admin
+  #       MYSQL_PASSWORD: 123456
+  # management1:
+  #     build: ./mysql-cluster
+  #     container_name: management1
+  #     command: ndb_mgmd
+  #     ports:
+  #        - "1186:1186"
+  #     networks:
+  #       mysql-cluster:
+  #         ipv4_address: 192.168.0.2
+  # ndb1:
+  #     build: ./mysql-cluster
+  #     container_name: ndb1
+  #     command: ndbd
+  #     networks:
+  #       mysql-cluster:
+  #         ipv4_address: 192.168.0.3
+  #     depends_on:
+  #       - management1
+  # ndb2:
+  #   build: ./mysql-cluster
+  #   container_name: ndb2
+  #   command: ndbd
+  #   networks:
+  #     mysql-cluster:
+  #       ipv4_address: 192.168.0.4
+  #   depends_on:
+  #     - management1
+  # sndb1:
+  #   build: ./mysql-cluster
+  #   container_name: sndb1
+  #   command: mysqld
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: 123456
+  #     MYSQL_ROOT_HOST: '%'
+  #     MYSQL_USER: admin
+  #     MYSQL_PASSWORD: 123456
+  #     MYSQL_DATABASE: test
+  #   ports:
+  #       - "3307:3306"
+  #   networks:
+  #     mysql-cluster:
+  #       ipv4_address: 192.168.0.10
+  #   depends_on:
+  #     - ndb1
+  #     - ndb2
   memcache:
       build: ./memcache
       ports:
@@ -122,6 +196,9 @@ services:
         - '$HOME/Document/Kitematic/postgres:/var/lib/postgresql'
       environment:
         POSTGRES_USER: root
+        POSTGRES_PASSWORD: 123456
+        POSTGRES_DB: test
+        POSTGRES_USER: admin
         POSTGRES_PASSWORD: 123456
   mongodb:
       build: ./mongodb
@@ -159,9 +236,11 @@ services:
     links:
       - redis-master:redis-master
       - redis-slave1
+      - redis-slave2
     depends_on:
       - redis-master
       - redis-slave1
+      - redis-slave2
   rabbit1:
     build: ./rabbitMQ
     hostname: rabbit1
@@ -196,3 +275,11 @@ services:
     depends_on:
       - rabbit1
       - rabbit2
+
+networks:
+    mysql-cluster:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 192.168.0.0/16

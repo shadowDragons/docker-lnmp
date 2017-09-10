@@ -1,4 +1,4 @@
-FROM hub.c.163.com/library/redis:3
+FROM redis:3
 
 MAINTAINER Li Yi <denverdino@gmail.com>
 

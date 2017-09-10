@@ -1,1 +1,1 @@
-FROM hub.c.163.com/library/mongo:latest
+FROM mongo:latest

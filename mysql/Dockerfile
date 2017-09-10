@@ -1,4 +1,4 @@
-FROM hub.c.163.com/library/mysql:5.7
+FROM mysql:5.7
 
 # this need to stay the same for script to work
 ENV MYSQL_USER mysql

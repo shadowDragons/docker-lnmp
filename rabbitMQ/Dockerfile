@@ -1,4 +1,4 @@
-FROM hub.c.163.com/library/rabbitmq:latest
+FROM rabbitmq:latest
 
 RUN rabbitmq-plugins enable --offline rabbitmq_management
 

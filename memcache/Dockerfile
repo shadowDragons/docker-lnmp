@@ -1,1 +1,1 @@
-FROM hub.c.163.com/library/memcached:latest
+FROM memcached:latest
