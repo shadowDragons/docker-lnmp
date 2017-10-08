@@ -1,45 +1,45 @@
 version: '3'
 services:
-  openresty-master:
-      build: ./openresty-master
-      ports:
-        - "81:80"
-      links:
-        - "openresty1"
-        - "openresty2"
-      volumes:
-        - '$HOME/Document/Kitematic/nginx:/opt'
-      depends_on:
-        - openresty1
-        - openresty2
-  openresty1:
-      build: ./openresty1
-      ports:
-        - "8001:8001"
-      links:
-        - "php1"
-        - "php2"
-        - "php3"
-      volumes:
-        - '$HOME/Document/Kitematic/nginx:/opt'
-      depends_on:
-        - php1
-        - php2
-        - php3
-  openresty2:
-    build: ./openresty2
-    ports:
-      - "8002:8002"
-    links:
-      - "php1"
-      - "php2"
-      - "php3"
-    volumes:
-      - '$HOME/Document/Kitematic/nginx:/opt'
-    depends_on:
-      - php1
-      - php2
-      - php3
+  # openresty-master:
+  #     build: ./openresty-master
+  #     ports:
+  #       - "81:80"
+  #     links:
+  #       - "openresty1"
+  #       - "openresty2"
+  #     volumes:
+  #       - '$HOME/Document/Kitematic/nginx:/opt'
+  #     depends_on:
+  #       - openresty1
+  #       - openresty2
+  # openresty1:
+  #     build: ./openresty1
+  #     ports:
+  #       - "8001:8001"
+  #     links:
+  #       - "php1"
+  #       - "php2"
+  #       - "php3"
+  #     volumes:
+  #       - '$HOME/Document/Kitematic/nginx:/opt'
+  #     depends_on:
+  #       - php1
+  #       - php2
+  #       - php3
+  # openresty2:
+  #   build: ./openresty2
+  #   ports:
+  #     - "8002:8002"
+  #   links:
+  #     - "php1"
+  #     - "php2"
+  #     - "php3"
+  #   volumes:
+  #     - '$HOME/Document/Kitematic/nginx:/opt'
+  #   depends_on:
+  #     - php1
+  #     - php2
+  #     - php3
   # consul1:
   #   image: "progrium/consul:latest"
   #   container_name: "consul1"
@@ -71,56 +71,56 @@ services:
   #   command: "-server -join consul1"
   #   depends_on:
   #     - consul1
-  php1:
-      build: ./php7
-      links:
-        - "memcache"
-      volumes:
-        - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
-      depends_on:
-        - memcache
-  php2:
-      build: ./php7
-      links:
-        - "memcache"
-      volumes:
-        - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
-      depends_on:
-        - memcache
-  php3:
-      build: ./php7
-      links:
-        - "memcache"
-      volumes:
-        - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
-      depends_on:
-        - memcache
-  mysql-master:
-      build: ./mysql-replication
-      restart: unless-stopped
-      ports:
-          - 3306:3306
-      environment:
-          - MYSQL_ROOT_PASSWORD=123456
-          - MYSQL_REPLICA_USER=replica
-          - MYSQL_REPLICA_PASS=replica_Passw0rd
-      command: ["mysqld", "--log-bin=mysql-bin", "--server-id=1"]
-  mysql-slave:
-      build: ./mysql-replication
-      restart: unless-stopped
-      ports:
-          - 3307:3306
-      links:
-        - mysql-master:master
-      environment:
-          - MYSQL_ROOT_PASSWORD=123456
-          - MYSQL_REPLICA_USER=replica
-          - MYSQL_REPLICA_PASS=replica_Passw0rd
-          - MYSQL_MASTER_SERVER=master
-          - MYSQL_MASTER_WAIT_TIME=10
-      command: ["mysqld", "--log-bin=mysql-bin", "--server-id=2"]
-      depends_on:
-          - mysql-master
+  # php1:
+  #     build: ./php7
+  #     links:
+  #       - "memcache"
+  #     volumes:
+  #       - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
+  #     depends_on:
+  #       - memcache
+  # php2:
+  #     build: ./php7
+  #     links:
+  #       - "memcache"
+  #     volumes:
+  #       - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
+  #     depends_on:
+  #       - memcache
+  # php3:
+  #     build: ./php7
+  #     links:
+  #       - "memcache"
+  #     volumes:
+  #       - '$HOME/Document/Kitematic/nginx/htdocs:/opt/htdocs'
+  #     depends_on:
+  #       - memcache
+  # mysql-master:
+  #     build: ./mysql-replication
+  #     restart: unless-stopped
+  #     ports:
+  #         - 3306:3306
+  #     environment:
+  #         - MYSQL_ROOT_PASSWORD=123456
+  #         - MYSQL_REPLICA_USER=replica
+  #         - MYSQL_REPLICA_PASS=replica_Passw0rd
+  #     command: ["mysqld", "--log-bin=mysql-bin", "--server-id=1"]
+  # mysql-slave:
+  #     build: ./mysql-replication
+  #     restart: unless-stopped
+  #     ports:
+  #         - 3307:3306
+  #     links:
+  #       - mysql-master:master
+  #     environment:
+  #         - MYSQL_ROOT_PASSWORD=123456
+  #         - MYSQL_REPLICA_USER=replica
+  #         - MYSQL_REPLICA_PASS=replica_Passw0rd
+  #         - MYSQL_MASTER_SERVER=master
+  #         - MYSQL_MASTER_WAIT_TIME=10
+  #     command: ["mysqld", "--log-bin=mysql-bin", "--server-id=2"]
+  #     depends_on:
+  #         - mysql-master
   # mysql:
   #     build: ./mysql
   #     ports:
@@ -177,104 +177,105 @@ services:
   #   depends_on:
   #     - ndb1
   #     - ndb2
-  memcache:
-      build: ./memcache
-      ports:
-        - "11211:11211"
+  # memcache:
+  #     build: ./memcache
+  #     ports:
+  #       - "11211:11211"
   elasticsearch:
       build: ./elasticsearch
       ports:
+        - "9100:9100"
         - "9200:9200"
         - "9300:9300"
-      volumes:
-        - '$HOME/Document/Kitematic/elasticsearch/data:/usr/share/elasticsearch/data'
-  postgres:
-      build: ./postgres
-      ports:
-        - "5432:5432"
-      volumes:
-        - '$HOME/Document/Kitematic/postgres:/var/lib/postgresql'
       environment:
-        POSTGRES_USER: root
-        POSTGRES_PASSWORD: 123456
-        POSTGRES_DB: test
-        POSTGRES_USER: admin
-        POSTGRES_PASSWORD: 123456
-  mongodb:
-      build: ./mongodb
-      ports:
-        - "27017:27017"
-      volumes:
-        - '$HOME/Document/Kitematic/mongodb:/data'
-  redis-master:
-      build: ./redis
-      ports:
-        - "6379:6379"
-  redis-slave1:
-      build: ./redis
-      command: redis-server --slaveof redis-master 6379
-      ports:
-        - "6380:6379"
-      links:
-        - redis-master:redis-master
-      depends_on:
-        - redis-master
-  redis-slave2:
-      build: ./redis
-      command: redis-server --slaveof redis-master 6379
-      ports:
-        - "6381:6379"
-      links:
-        - redis-master:redis-master
-      depends_on:
-        - redis-master
-  redis-sentinel:
-    build: ./sentinel
-    environment:
-      - SENTINEL_DOWN_AFTER=5000
-      - SENTINEL_FAILOVER=5000    
-    links:
-      - redis-master:redis-master
-      - redis-slave1
-      - redis-slave2
-    depends_on:
-      - redis-master
-      - redis-slave1
-      - redis-slave2
-  rabbit1:
-    build: ./rabbitMQ
-    hostname: rabbit1
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-  rabbit2:
-    build: ./rabbitMQ
-    hostname: rabbit2
-    links:
-      - rabbit1
-    environment:
-    - CLUSTERED=true
-    - CLUSTER_WITH=rabbit1
-    - RAM_NODE=true
-    ports:
-        - "5673:5672"
-        - "15673:15672"
-    depends_on:
-      - rabbit1
-  rabbit3:
-    build: ./rabbitMQ
-    hostname: rabbit3
-    links:
-      - rabbit1
-      - rabbit2
-    environment:
-    - CLUSTERED=true
-    - CLUSTER_WITH=rabbit1
-    ports:
-          - "5674:5672"
-    depends_on:
-      - rabbit1
-      - rabbit2
+        - ES_JAVA_OPTS=-Xms512m -Xmx512m
+  # postgres:
+  #     build: ./postgres
+  #     ports:
+  #       - "5432:5432"
+  #     volumes:
+  #       - '$HOME/Document/Kitematic/postgres:/var/lib/postgresql'
+  #     environment:
+  #       POSTGRES_USER: root
+  #       POSTGRES_PASSWORD: 123456
+  #       POSTGRES_DB: test
+  #       POSTGRES_USER: admin
+  #       POSTGRES_PASSWORD: 123456
+  # mongodb:
+  #     build: ./mongodb
+  #     ports:
+  #       - "27017:27017"
+  #     volumes:
+  #       - '$HOME/Document/Kitematic/mongodb:/data'
+  # redis-master:
+  #     build: ./redis
+  #     ports:
+  #       - "6379:6379"
+  # redis-slave1:
+  #     build: ./redis
+  #     command: redis-server --slaveof redis-master 6379
+  #     ports:
+  #       - "6380:6379"
+  #     links:
+  #       - redis-master:redis-master
+  #     depends_on:
+  #       - redis-master
+  # redis-slave2:
+  #     build: ./redis
+  #     command: redis-server --slaveof redis-master 6379
+  #     ports:
+  #       - "6381:6379"
+  #     links:
+  #       - redis-master:redis-master
+  #     depends_on:
+  #       - redis-master
+  # redis-sentinel:
+  #   build: ./sentinel
+  #   environment:
+  #     - SENTINEL_DOWN_AFTER=5000
+  #     - SENTINEL_FAILOVER=5000    
+  #   links:
+  #     - redis-master:redis-master
+  #     - redis-slave1
+  #     - redis-slave2
+  #   depends_on:
+  #     - redis-master
+  #     - redis-slave1
+  #     - redis-slave2
+  # rabbit1:
+  #   build: ./rabbitMQ
+  #   hostname: rabbit1
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  # rabbit2:
+  #   build: ./rabbitMQ
+  #   hostname: rabbit2
+  #   links:
+  #     - rabbit1
+  #   environment:
+  #   - CLUSTERED=true
+  #   - CLUSTER_WITH=rabbit1
+  #   - RAM_NODE=true
+  #   ports:
+  #       - "5673:5672"
+  #       - "15673:15672"
+  #   depends_on:
+  #     - rabbit1
+  # rabbit3:
+  #   build: ./rabbitMQ
+  #   hostname: rabbit3
+  #   links:
+  #     - rabbit1
+  #     - rabbit2
+  #   environment:
+  #   - CLUSTERED=true
+  #   - CLUSTER_WITH=rabbit1
+  #   ports:
+  #         - "5674:5672"
+  #   depends_on:
+  #     - rabbit1
+  #     - rabbit2
 
 networks:
     mysql-cluster:

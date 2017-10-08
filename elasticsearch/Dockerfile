@@ -1,6 +1,1 @@
-FROM elasticsearch:2.4
-
-RUN /usr/share/elasticsearch/bin/plugin install mobz/elasticsearch-head
-RUN usermod -u 1000 elasticsearch
-
-
+FROM registry.cn-hangzhou.aliyuncs.com/zhongjunbin/elastic-search:5.6.1
